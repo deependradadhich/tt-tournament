@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TournamentFormat {
+  SINGLES
+  DOUBLES
+}
+
+enum MatchType {
+  KNOCKOUT
+  ROUND_ROBIN
+}
+
+enum TournamentStatus {
+  DRAFT
+  LOCKED
+  COMPLETED
+}
+
+enum MatchStatus {
+  PENDING // waiting on a previous round to fill in a player
+  READY // both players known, toss not yet done
+  LIVE // toss done, score entry in progress
+  COMPLETED
+  BYE // auto-completed because the opponent slot was empty
+}
+
+enum TossChoice {
+  SERVE
+  SIDE
+}
+
+model Tournament {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  format      TournamentFormat  @default(SINGLES)
+  matchType   MatchType         @default(KNOCKOUT)
+  status      TournamentStatus  @default(DRAFT)
+
+  pointsPerGame Int     @default(11)
+  winBy2        Boolean @default(true)
+  bestOf        Int     @default(3)
+
+  venue                String?
+  maxPlayers           Int?
+  registrationDeadline DateTime?
+
+  adminKey String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  players Player[]
+  teams   Team[]
+  matches Match[]
+}
+
+model Player {
+  id           String   @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  name         String
+  contact      String?
+  createdAt    DateTime @default(now())
+
+  teamId String?
+  team   Team? @relation(fields: [teamId], references: [id])
+
+  matchesAsA Match[] @relation("MatchPlayerA")
+  matchesAsB Match[] @relation("MatchPlayerB")
+  matchesWon Match[] @relation("MatchWinner")
+}
+
+// Doubles pairing — a Match references Team (not Player) columns when the tournament format is DOUBLES.
+model Team {
+  id           String   @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  name         String
+  createdAt    DateTime @default(now())
+
+  players Player[]
+
+  matchesAsA Match[] @relation("MatchTeamA")
+  matchesAsB Match[] @relation("MatchTeamB")
+  matchesWon Match[] @relation("MatchTeamWinner")
+}
+
+model Match {
+  id           String   @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  round    Int
+  position Int // slot index within the round, left to right
+
+  playerAId String?
+  playerA   Player? @relation("MatchPlayerA", fields: [playerAId], references: [id])
+  playerBId String?
+  playerB   Player? @relation("MatchPlayerB", fields: [playerBId], references: [id])
+  winnerId  String?
+  winner    Player? @relation("MatchWinner", fields: [winnerId], references: [id])
+
+  teamAId      String?
+  teamA        Team? @relation("MatchTeamA", fields: [teamAId], references: [id])
+  teamBId      String?
+  teamB        Team? @relation("MatchTeamB", fields: [teamBId], references: [id])
+  winnerTeamId String?
+  winnerTeam   Team? @relation("MatchTeamWinner", fields: [winnerTeamId], references: [id])
+
+  status MatchStatus @default(PENDING)
+
+  tossWinnerId String?
+  tossChoice   TossChoice?
+
+  // JSON array of { a: number, b: number } per completed/in-progress game
+  games String @default("[]")
+
+  nextMatchId   String?
+  nextMatchSlot Int? // 0 = slot A, 1 = slot B on the next match (knockout only)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tournamentId, round, position])
+}

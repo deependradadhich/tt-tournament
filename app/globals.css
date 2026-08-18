@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.16 0 0);
+  --card: #ffffff;
+  --card-border: oklch(0.92 0 0);
+  --muted: oklch(0.5 0 0);
+  --faint: oklch(0.72 0 0);
+  --faint-bg: oklch(0.95 0 0);
+  --accent: oklch(0.5 0.16 25);
+  --accent-tint: oklch(0.94 0.045 25);
+  --accent-contrast: #ffffff;
+  --danger: oklch(0.55 0.22 10);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-faint-bg: var(--faint-bg);
+  --color-accent: var(--accent);
+  --color-accent-tint: var(--accent-tint);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-danger: var(--danger);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: oklch(0.16 0 0);
+    --foreground: oklch(0.95 0 0);
+    --card: oklch(0.22 0 0);
+    --card-border: oklch(0.32 0 0);
+    --muted: oklch(0.65 0 0);
+    --faint: oklch(0.45 0 0);
+    --faint-bg: oklch(0.28 0 0);
+    --accent: oklch(0.62 0.17 25);
+    --accent-tint: oklch(0.32 0.075 25);
+    --accent-contrast: #ffffff;
+    --danger: oklch(0.65 0.2 10);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
