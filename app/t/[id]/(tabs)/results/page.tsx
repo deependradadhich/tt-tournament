@@ -52,6 +52,11 @@ export default async function PublicResultsTabPage({
         />
       )}
 
+      <StandingsTable
+        standings={computeStandings(tournament)}
+        profileHrefBase={`/t/${tournament.id}/roster`}
+      />
+
       {tournament.matchType === "KNOCKOUT" ? (
         <BracketView
           matches={tournament.matches}
@@ -61,16 +66,13 @@ export default async function PublicResultsTabPage({
           matchHref={(matchId) => `/t/${tournament.id}/match/${matchId}`}
         />
       ) : (
-        <>
-          <StandingsTable standings={computeStandings(tournament)} />
-          <FixturesList
-            matches={tournament.matches}
-            totalRounds={totalRounds}
-            rules={rules}
-            doubles={doubles}
-            matchHref={(matchId) => `/t/${tournament.id}/match/${matchId}`}
-          />
-        </>
+        <FixturesList
+          matches={tournament.matches}
+          totalRounds={totalRounds}
+          rules={rules}
+          doubles={doubles}
+          matchHref={(matchId) => `/t/${tournament.id}/match/${matchId}`}
+        />
       )}
     </div>
   );

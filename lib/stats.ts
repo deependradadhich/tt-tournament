@@ -27,15 +27,26 @@ export type StandingRow = {
   gamesWon: number;
   gamesLost: number;
   points: number;
+  pointsScored: number;
 };
 
-/** Round-robin standings: 1 point per match won, tiebreak by game differential. */
+/** Tournament-wide leaderboard: 1 point per match won, tiebreak by game differential. Works for any match type. */
 export function computeStandings(tournament: TournamentWithData): StandingRow[] {
   const doubles = tournament.format === "DOUBLES";
   const entrants = getEntrants(tournament);
   const stats = new Map<string, Omit<StandingRow, "rank">>();
   for (const e of entrants) {
-    stats.set(e.id, { id: e.id, name: e.name, played: 0, won: 0, lost: 0, gamesWon: 0, gamesLost: 0, points: 0 });
+    stats.set(e.id, {
+      id: e.id,
+      name: e.name,
+      played: 0,
+      won: 0,
+      lost: 0,
+      gamesWon: 0,
+      gamesLost: 0,
+      points: 0,
+      pointsScored: 0,
+    });
   }
 
   for (const m of tournament.matches) {
@@ -55,6 +66,8 @@ export function computeStandings(tournament: TournamentWithData): StandingRow[] 
       const result = isGameWon(g, rules);
       if (result === "A") gamesWonA++;
       else if (result === "B") gamesWonB++;
+      a.pointsScored += g.a;
+      b.pointsScored += g.b;
     }
 
     a.played++;
