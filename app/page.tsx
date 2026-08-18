@@ -63,6 +63,8 @@ export default async function Home() {
           </Link>
         </div>
       )}
+
+      <footer className="py-6 text-center text-xs text-faint">Designed by DD, Defended by TT @2026</footer>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTournamentBySlugId } from "@/lib/tournament-data";
 import { EmptyState } from "@/components/ui/empty-state";
+import { HomeLink } from "@/components/ui/home-link";
 
 export default async function PublicTournamentPage({
   params,
@@ -15,6 +16,7 @@ export default async function PublicTournamentPage({
 
   return (
     <div className="flex flex-1 flex-col gap-4">
+      <HomeLink />
       <div className="px-5 pt-4">
         <p className="text-xs font-bold uppercase tracking-wide text-accent">Office League</p>
         <h1 className="text-2xl font-extrabold">{tournament.name}</h1>
