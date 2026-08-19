@@ -5,6 +5,7 @@ import { computeEntrantStats } from "@/lib/stats";
 import { totalRoundsFor } from "@/lib/format";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { AvatarCircle } from "@/components/ui/avatar";
+import { WinRateRing } from "@/components/win-rate-ring";
 
 export default async function AdminProfilePage({
   params,
@@ -33,6 +34,10 @@ export default async function AdminProfilePage({
         <AvatarCircle name={entrant.name} className="h-16 w-16 text-xl" />
         <p className="text-lg font-bold">{entrant.name}</p>
         {subtitle && <p className="text-sm text-muted">{subtitle}</p>}
+      </div>
+
+      <div className="flex justify-center pt-4">
+        <WinRateRing winPct={stats.winPct} won={stats.won} lost={stats.lost} />
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 px-5 pt-5">
