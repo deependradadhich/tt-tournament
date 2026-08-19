@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTournamentByAdminKey } from "@/lib/tournament-data";
 import { BracketView } from "@/components/bracket-view";
 import { StandingsTable, FixturesList } from "@/components/round-robin-view";
+import { TopPerformersCharts } from "@/components/top-performers-charts";
 import { UpNextCard, findNextActionableMatch } from "@/components/up-next-card";
 import { LiveRefresh } from "@/components/live-refresh";
 import { CopyLinkButton } from "@/components/copy-link-button";
@@ -28,6 +29,7 @@ export default async function ResultsTabPage({
   };
   const champion = computeChampion(tournament, totalRounds);
   const nextMatch = !champion ? findNextActionableMatch(tournament.matches, doubles) : undefined;
+  const standings = computeStandings(tournament);
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -60,10 +62,9 @@ export default async function ResultsTabPage({
         />
       )}
 
-      <StandingsTable
-        standings={computeStandings(tournament)}
-        profileHrefBase={`/admin/${tournament.adminKey}/roster`}
-      />
+      <TopPerformersCharts standings={standings} profileHrefBase={`/admin/${tournament.adminKey}/roster`} />
+
+      <StandingsTable standings={standings} profileHrefBase={`/admin/${tournament.adminKey}/roster`} />
 
       {tournament.matchType === "KNOCKOUT" ? (
         <BracketView

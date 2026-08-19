@@ -14,13 +14,9 @@ export function StandingsTable({
   profileHrefBase: string;
   title?: string;
 }) {
-  const played = standings.filter((r) => r.played > 0);
-
   return (
     <div className="flex flex-col gap-3 px-5">
       <p className="text-xs font-bold uppercase tracking-wide text-muted">{title}</p>
-
-      {played.length >= 2 && <LeaderboardHighlights standings={played} />}
 
       <div>
         <div className="flex px-3 pb-1.5 text-[11px] font-bold uppercase tracking-wide text-muted">
@@ -50,28 +46,6 @@ export function StandingsTable({
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function LeaderboardHighlights({ standings }: { standings: StandingRow[] }) {
-  const leader = standings[0];
-  const topScorer = [...standings].sort((a, b) => b.pointsScored - a.pointsScored)[0];
-
-  return (
-    <div className="grid grid-cols-2 gap-2.5">
-      <HighlightCard label="Best Player" name={leader.name} value={`${leader.won}W – ${leader.lost}L`} />
-      <HighlightCard label="Top Scorer" name={topScorer.name} value={`${topScorer.pointsScored} pts`} />
-    </div>
-  );
-}
-
-function HighlightCard({ label, name, value }: { label: string; name: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-card-border bg-card p-3.5">
-      <p className="text-[11px] font-bold uppercase tracking-wide text-accent">{label}</p>
-      <p className="mt-1 truncate text-sm font-bold">{name}</p>
-      <p className="text-xs text-muted">{value}</p>
     </div>
   );
 }
